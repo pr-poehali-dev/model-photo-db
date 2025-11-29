@@ -60,7 +60,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 def search_models(cur, params, page, per_page, offset):
     profile_id = params.get('id')
     name = params.get('name')
-    city = params.get('city', 'Хабаровск')
+    city = params.get('city')
     gender = params.get('gender')
     min_height = params.get('minHeight')
     max_height = params.get('maxHeight')
@@ -167,7 +167,7 @@ def search_models(cur, params, page, per_page, offset):
 def search_photographers(cur, params, page, per_page, offset):
     profile_id = params.get('id')
     name = params.get('name')
-    city = params.get('city', 'Хабаровск')
+    city = params.get('city')
     specialization = params.get('specialization')
     cooperation_format = params.get('cooperationFormat')
     

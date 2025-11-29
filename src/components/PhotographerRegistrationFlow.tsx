@@ -96,7 +96,7 @@ export default function PhotographerRegistrationFlow({ open, onClose }: Photogra
     }
   };
 
-  const handleProfileSubmit = () => {
+  const handleProfileSubmit = async () => {
     if (!formData.name || !formData.email || 
         !formData.city || formData.specialization.length === 0) {
       toast({
@@ -107,31 +107,69 @@ export default function PhotographerRegistrationFlow({ open, onClose }: Photogra
       return;
     }
 
-    toast({
-      title: 'Анкета сохранена',
-      description: 'Ваша анкета успешно создана!',
-    });
+    try {
+      const response = await fetch('https://functions.poehali.dev/ca71ce4c-5d1f-47f4-bf13-9817e53809c1', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fullName: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          city: formData.city,
+          experienceYears: formData.experience ? parseInt(formData.experience) : 0,
+          specializations: formData.specialization,
+          equipment: formData.equipment,
+          portfolioLinks: formData.portfolio ? [formData.portfolio] : [],
+          instagram: formData.instagram,
+          vk: null,
+          telegram: null,
+          aboutMe: formData.additionalInfo,
+          priceRange: formData.priceFrom,
+          cooperationFormat: formData.workingFormats.includes('paid') ? 'paid' : 'tfp',
+          isBlocked: false
+        })
+      });
 
-    onClose();
-    setStep('initial');
-    setPhotos([]);
-    setCoverPhotoId(null);
-    setFormData({
-      login: '',
-      password: '',
-      phone: '',
-      name: '',
-      email: '',
-      city: 'Хабаровск',
-      specialization: [],
-      experience: '',
-      equipment: '',
-      workingFormats: [],
-      priceFrom: '',
-      portfolio: '',
-      instagram: '',
-      additionalInfo: ''
-    });
+      if (!response.ok) {
+        throw new Error('Registration failed');
+      }
+
+      const data = await response.json();
+
+      toast({
+        title: 'Анкета сохранена',
+        description: `Ваша анкета #${data.id} успешно создана!`,
+      });
+
+      onClose();
+      setStep('initial');
+      setPhotos([]);
+      setCoverPhotoId(null);
+      setFormData({
+        login: '',
+        password: '',
+        phone: '',
+        name: '',
+        email: '',
+        city: 'Хабаровск',
+        specialization: [],
+        experience: '',
+        equipment: '',
+        workingFormats: [],
+        priceFrom: '',
+        portfolio: '',
+        instagram: '',
+        additionalInfo: ''
+      });
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось сохранить анкету. Попробуйте ещё раз.',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleCancel = () => {

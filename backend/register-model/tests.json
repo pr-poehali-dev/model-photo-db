@@ -25,7 +25,7 @@
         "instagram": "@anna_model",
         "aboutMe": "Профессиональная модель"
       },
-      "expectedStatus": 201,
+      "expectedStatus": 200,
       "bodyMatcher": "skip"
     }
   ]

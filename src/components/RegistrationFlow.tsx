@@ -105,7 +105,7 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
     }
   };
 
-  const handleProfileSubmit = () => {
+  const handleProfileSubmit = async () => {
     if (!formData.name || !formData.birthDate || !formData.email || 
         !formData.city || !formData.height || !formData.cooperationFormat || 
         !formData.sensitivityLevel) {
@@ -126,36 +126,83 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
       return;
     }
 
-    toast({
-      title: 'Анкета сохранена',
-      description: 'Ваша анкета успешно создана!',
-    });
+    try {
+      const response = await fetch('https://functions.poehali.dev/eb9f6d6a-af9b-43d3-bea1-697badf8e8b8', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fullName: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          birthDate: formData.birthDate,
+          gender: 'Женщина',
+          height: parseInt(formData.height),
+          weight: null,
+          bust: null,
+          waist: null,
+          hips: null,
+          shoeSize: null,
+          hairColor: formData.hairLength,
+          eyeColor: null,
+          city: formData.city,
+          experience: formData.experience,
+          specializations: formData.styles,
+          portfolioLinks: formData.portfolio ? [formData.portfolio] : [],
+          instagram: formData.instagram,
+          vk: null,
+          telegram: formData.messenger,
+          aboutMe: formData.physicalFeatures,
+          opennessLevel: formData.sensitivityLevel,
+          cooperationFormat: formData.cooperationFormat,
+          isBlocked: false
+        })
+      });
 
-    onClose();
-    setStep('initial');
-    setPhotos([]);
-    setCoverPhotoId(null);
-    setFormData({
-      login: '',
-      password: '',
-      phone: '',
-      name: '',
-      birthDate: '',
-      email: '',
-      city: 'Хабаровск',
-      height: '',
-      cooperationFormat: '',
-      rate: '',
-      sensitivityLevel: '',
-      hairLength: '',
-      styles: [],
-      experience: '',
-      messenger: '',
-      portfolio: '',
-      instagram: '',
-      physicalFeatures: '',
-      sensitiveTopics: ''
-    });
+      if (!response.ok) {
+        throw new Error('Registration failed');
+      }
+
+      const data = await response.json();
+
+      toast({
+        title: 'Анкета сохранена',
+        description: `Ваша анкета #${data.id} успешно создана!`,
+      });
+
+      onClose();
+      setStep('initial');
+      setPhotos([]);
+      setCoverPhotoId(null);
+      setFormData({
+        login: '',
+        password: '',
+        phone: '',
+        name: '',
+        birthDate: '',
+        email: '',
+        city: 'Хабаровск',
+        height: '',
+        cooperationFormat: '',
+        rate: '',
+        sensitivityLevel: '',
+        hairLength: '',
+        styles: [],
+        experience: '',
+        messenger: '',
+        portfolio: '',
+        instagram: '',
+        physicalFeatures: '',
+        sensitiveTopics: ''
+      });
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось сохранить анкету. Попробуйте ещё раз.',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleCancel = () => {

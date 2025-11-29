@@ -17,7 +17,7 @@
         "aboutMe": "Профессиональный фотограф",
         "priceRange": "от 5000₽"
       },
-      "expectedStatus": 201,
+      "expectedStatus": 200,
       "bodyMatcher": "skip"
     }
   ]

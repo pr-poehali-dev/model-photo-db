@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -151,6 +151,8 @@ const mockPhotographers: Profile[] = [
   { id: 2003, name: 'Сергей Морозов', city: 'Новосибирск', style: 'Commercial, Editorial', coverImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&h=500&fit=crop', lastLogin: new Date(Date.now() - 172800000) },
 ];
 
+const API_BASE = 'https://functions.poehali.dev/5e52c74c-057c-4f72-a08d-5d924468db69';
+
 export default function Index() {
   const [currentPage, setCurrentPage] = useState<PageType>('models');
   const [userRole, setUserRole] = useState<UserRole>('guest');
@@ -165,7 +167,102 @@ export default function Index() {
   const [loginForm, setLoginForm] = useState({ login: '', password: '' });
   const [userProfileId, setUserProfileId] = useState<number | null>(null);
 
-  const currentProfiles = currentPage === 'models' ? mockModels : mockPhotographers;
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPageNum, setCurrentPageNum] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  
+  const [filters, setFilters] = useState({
+    city: '',
+    minHeight: '',
+    maxHeight: '',
+    minAge: '',
+    maxAge: '',
+    opennessLevel: '',
+    cooperationFormat: '',
+    specialization: ''
+  });
+
+  const currentProfiles = profiles.length > 0 ? profiles : (currentPage === 'models' ? mockModels : mockPhotographers);
+
+  const loadProfiles = async (page = 1, resetList = false) => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        type: currentPage === 'models' ? 'model' : 'photographer',
+        page: page.toString()
+      });
+
+      if (filters.city) params.append('city', filters.city);
+      if (filters.minHeight) params.append('minHeight', filters.minHeight);
+      if (filters.maxHeight) params.append('maxHeight', filters.maxHeight);
+      if (filters.minAge) params.append('minAge', filters.minAge);
+      if (filters.maxAge) params.append('maxAge', filters.maxAge);
+      if (filters.opennessLevel) params.append('opennessLevel', filters.opennessLevel);
+      if (filters.cooperationFormat) params.append('cooperationFormat', filters.cooperationFormat);
+      if (filters.specialization) params.append('specialization', filters.specialization);
+
+      const response = await fetch(`${API_BASE}?${params}`);
+      const data = await response.json();
+
+      if (data.profiles && Array.isArray(data.profiles)) {
+        const mappedProfiles: Profile[] = data.profiles.map((p: any) => ({
+          id: p.id,
+          name: p.fullName || p.name || 'Без имени',
+          city: p.city || 'Не указан',
+          style: p.specializations?.join(', ') || p.opennessLevel || p.cooperationFormat || 'Не указан',
+          coverImage: p.profilePhotoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=500&fit=crop',
+          lastLogin: p.lastLogin ? new Date(p.lastLogin) : new Date()
+        }));
+
+        if (resetList) {
+          setProfiles(mappedProfiles);
+        } else {
+          setProfiles(prev => [...prev, ...mappedProfiles]);
+        }
+        
+        setHasMore(mappedProfiles.length === 20);
+      }
+    } catch (error) {
+      console.error('Failed to load profiles:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setProfiles([]);
+    setCurrentPageNum(1);
+    setHasMore(true);
+    loadProfiles(1, true);
+  }, [currentPage]);
+
+  const handleApplyFilters = () => {
+    setProfiles([]);
+    setCurrentPageNum(1);
+    setHasMore(true);
+    loadProfiles(1, true);
+    setIsSearchOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      city: '',
+      minHeight: '',
+      maxHeight: '',
+      minAge: '',
+      maxAge: '',
+      opennessLevel: '',
+      cooperationFormat: '',
+      specialization: ''
+    });
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = currentPageNum + 1;
+    setCurrentPageNum(nextPage);
+    loadProfiles(nextPage, false);
+  };
 
   const handleLogin = () => {
     if (loginForm.login === 'ad' && loginForm.password === '112233') {
@@ -251,36 +348,116 @@ export default function Index() {
                   Поиск
                 </Button>
               </SheetTrigger>
-              <SheetContent className="w-full sm:max-w-md animate-slide-in-right">
+              <SheetContent className="w-full sm:max-w-md animate-slide-in-right overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle>Расширенный поиск</SheetTitle>
                 </SheetHeader>
-                <div className="space-y-4 mt-6">
-                  <div>
-                    <Label htmlFor="search-name">Имя</Label>
-                    <Input id="search-name" placeholder="Введите имя" />
-                  </div>
+                <div className="space-y-4 mt-6 pb-6">
                   <div>
                     <Label htmlFor="search-city">Город</Label>
-                    <Select>
-                      <SelectTrigger id="search-city">
-                        <SelectValue placeholder="Выберите город" />
+                    <Input 
+                      id="search-city" 
+                      placeholder="Москва, Санкт-Петербург..." 
+                      value={filters.city}
+                      onChange={(e) => setFilters(prev => ({ ...prev, city: e.target.value }))}
+                    />
+                  </div>
+
+                  {currentPage === 'models' && (
+                    <>
+                      <div>
+                        <Label>Рост (см)</Label>
+                        <div className="flex gap-2">
+                          <Input 
+                            placeholder="От" 
+                            type="number"
+                            value={filters.minHeight}
+                            onChange={(e) => setFilters(prev => ({ ...prev, minHeight: e.target.value }))}
+                          />
+                          <Input 
+                            placeholder="До" 
+                            type="number"
+                            value={filters.maxHeight}
+                            onChange={(e) => setFilters(prev => ({ ...prev, maxHeight: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label>Возраст</Label>
+                        <div className="flex gap-2">
+                          <Input 
+                            placeholder="От" 
+                            type="number"
+                            value={filters.minAge}
+                            onChange={(e) => setFilters(prev => ({ ...prev, minAge: e.target.value }))}
+                          />
+                          <Input 
+                            placeholder="До" 
+                            type="number"
+                            value={filters.maxAge}
+                            onChange={(e) => setFilters(prev => ({ ...prev, maxAge: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="openness-level">Уровень откровенности</Label>
+                        <Select value={filters.opennessLevel} onValueChange={(value) => setFilters(prev => ({ ...prev, opennessLevel: value }))}>
+                          <SelectTrigger id="openness-level">
+                            <SelectValue placeholder="Выберите уровень" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Портрет">Портрет</SelectItem>
+                            <SelectItem value="Купальник">Купальник</SelectItem>
+                            <SelectItem value="Бельё">Бельё</SelectItem>
+                            <SelectItem value="Гламур">Гламур</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </>
+                  )}
+
+                  {currentPage === 'photographers' && (
+                    <div>
+                      <Label htmlFor="specialization">Специализация</Label>
+                      <Input 
+                        id="specialization" 
+                        placeholder="Fashion, Beauty, Portrait..."
+                        value={filters.specialization}
+                        onChange={(e) => setFilters(prev => ({ ...prev, specialization: e.target.value }))}
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <Label htmlFor="cooperation-format">Формат сотрудничества</Label>
+                    <Select value={filters.cooperationFormat} onValueChange={(value) => setFilters(prev => ({ ...prev, cooperationFormat: value }))}>
+                      <SelectTrigger id="cooperation-format">
+                        <SelectValue placeholder="Выберите формат" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="moscow">Москва</SelectItem>
-                        <SelectItem value="spb">Санкт-Петербург</SelectItem>
-                        <SelectItem value="ekb">Екатеринбург</SelectItem>
-                        <SelectItem value="kazan">Казань</SelectItem>
+                        <SelectItem value="tfp">TFP (Time for Prints)</SelectItem>
+                        <SelectItem value="paid">Платное</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <Label htmlFor="search-style">Стиль съёмки</Label>
-                    <Input id="search-style" placeholder="Fashion, Beauty, Portrait..." />
+
+                  <div className="flex gap-2">
+                    <Button 
+                      className="flex-1 bg-gradient-to-r from-primary to-secondary"
+                      onClick={handleApplyFilters}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Загрузка...' : 'Применить'}
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={handleClearFilters}
+                    >
+                      Сбросить
+                    </Button>
                   </div>
-                  <Button className="w-full bg-gradient-to-r from-primary to-secondary">
-                    Применить фильтры
-                  </Button>
                 </div>
               </SheetContent>
             </Sheet>
@@ -432,6 +609,35 @@ export default function Index() {
             </Card>
           ))}
         </div>
+
+        {isLoading && (
+          <div className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="mt-2 text-muted-foreground">Загрузка профилей...</p>
+          </div>
+        )}
+
+        {!isLoading && profiles.length === 0 && (
+          <div className="text-center py-12">
+            <Icon name="Search" size={64} className="mx-auto text-muted-foreground mb-4" />
+            <p className="text-xl text-muted-foreground">Профили не найдены</p>
+            <p className="text-sm text-muted-foreground mt-2">Попробуйте изменить параметры поиска</p>
+          </div>
+        )}
+
+        {!isLoading && hasMore && profiles.length > 0 && (
+          <div className="text-center mt-8">
+            <Button 
+              size="lg"
+              variant="outline"
+              onClick={handleLoadMore}
+              className="bg-gradient-to-r from-primary to-secondary text-primary-foreground border-none hover:opacity-90"
+            >
+              <Icon name="ChevronDown" className="mr-2" size={20} />
+              Загрузить ещё
+            </Button>
+          </div>
+        )}
 
         <RegistrationFlow 
           open={isRegistrationOpen} 
