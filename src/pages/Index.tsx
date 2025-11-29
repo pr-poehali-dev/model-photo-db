@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import RegistrationFlow from '@/components/RegistrationFlow';
+import PhotographerRegistrationFlow from '@/components/PhotographerRegistrationFlow';
 import ModelViewDialog from '@/components/ModelViewDialog';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -154,6 +155,7 @@ export default function Index() {
   const [userRole, setUserRole] = useState<UserRole>('guest');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+  const [isPhotographerRegistrationOpen, setIsPhotographerRegistrationOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isModelViewOpen, setIsModelViewOpen] = useState(false);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
@@ -169,7 +171,11 @@ export default function Index() {
   };
 
   const handleAddProfile = () => {
-    setIsRegistrationOpen(true);
+    if (currentPage === 'models') {
+      setIsRegistrationOpen(true);
+    } else {
+      setIsPhotographerRegistrationOpen(true);
+    }
   };
 
   const handleViewModel = (modelId: number) => {
@@ -379,6 +385,11 @@ export default function Index() {
         <RegistrationFlow 
           open={isRegistrationOpen} 
           onClose={() => setIsRegistrationOpen(false)} 
+        />
+        
+        <PhotographerRegistrationFlow
+          open={isPhotographerRegistrationOpen}
+          onClose={() => setIsPhotographerRegistrationOpen(false)}
         />
         
         <ModelViewDialog
