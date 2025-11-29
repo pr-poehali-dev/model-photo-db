@@ -72,9 +72,9 @@ const mockModelsDetailed: Model[] = [
     physicalFeatures: 'Голубые глаза, светлые волосы',
     sensitiveTopics: 'Не работаю с underwater съёмками',
     images: [
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&h=700&fit=crop',
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=700&fit=crop',
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&h=700&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&h=700&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&h=700&fit=crop&q=80',
     ]
   },
   {
@@ -93,8 +93,8 @@ const mockModelsDetailed: Model[] = [
     instagram: '@victoria.smirnova',
     physicalFeatures: 'Карие глаза, темные волосы',
     images: [
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=700&fit=crop',
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=700&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=500&h=700&fit=crop&q=80',
     ]
   },
   {
@@ -115,10 +115,10 @@ const mockModelsDetailed: Model[] = [
     instagram: '@daria.novikova',
     physicalFeatures: 'Зелёные глаза, рыжие волосы',
     images: [
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=700&fit=crop',
-      'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=700&fit=crop',
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&h=700&fit=crop',
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=700&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&h=700&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1542596768-5d1d21f1cf98?w=500&h=700&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&h=700&fit=crop&q=80',
     ]
   },
   {
@@ -137,8 +137,8 @@ const mockModelsDetailed: Model[] = [
     physicalFeatures: 'Серые глаза, длинные чёрные волосы',
     sensitiveTopics: 'Предпочитаю художественные проекты',
     images: [
-      'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=700&fit=crop',
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=700&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=700&fit=crop&q=80',
     ]
   },
 ];
