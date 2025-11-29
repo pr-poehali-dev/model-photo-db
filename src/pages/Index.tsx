@@ -8,6 +8,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import RegistrationFlow from '@/components/RegistrationFlow';
+import { Toaster } from '@/components/ui/toaster';
 
 type UserRole = 'guest' | 'model' | 'photographer' | 'admin';
 type PageType = 'models' | 'photographers';
@@ -38,6 +40,7 @@ export default function Index() {
   const [currentPage, setCurrentPage] = useState<PageType>('models');
   const [userRole, setUserRole] = useState<UserRole>('guest');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [loginForm, setLoginForm] = useState({ login: '', password: '' });
 
@@ -51,9 +54,7 @@ export default function Index() {
   };
 
   const handleAddProfile = () => {
-    if (userRole === 'guest') {
-      setIsLoginOpen(true);
-    }
+    setIsRegistrationOpen(true);
   };
 
   return (
@@ -233,6 +234,12 @@ export default function Index() {
             </Card>
           ))}
         </div>
+
+        <RegistrationFlow 
+          open={isRegistrationOpen} 
+          onClose={() => setIsRegistrationOpen(false)} 
+        />
+        <Toaster />
       </div>
     </div>
   );
