@@ -124,8 +124,8 @@ export default function PhotographerProfileStep({
   };
 
   return (
-    <DialogContent className="max-w-2xl max-h-[90vh] p-0">
-      <ScrollArea className="max-h-[90vh]">
+    <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col">
+      <ScrollArea className="flex-1 overflow-y-auto">
         <div className="p-6 space-y-6">
           <DialogHeader>
             <DialogTitle>Редактор анкеты фотографа</DialogTitle>

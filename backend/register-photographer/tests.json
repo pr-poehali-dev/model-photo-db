@@ -6,7 +6,7 @@
       "path": "/",
       "body": {
         "fullName": "Иван Иванов",
-        "phone": "+79999876543",
+        "phone": "+79889876543",
         "email": "ivan@example.com",
         "city": "Санкт-Петербург",
         "experienceYears": 5,

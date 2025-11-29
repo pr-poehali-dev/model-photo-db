@@ -45,15 +45,16 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     cur.execute(
         '''
-        INSERT INTO models (
+        INSERT INTO t_p16461725_model_photo_db.models (
             full_name, phone, email, birth_date, gender,
             height, weight, bust, waist, hips, shoe_size,
             hair_color, eye_color, city, experience,
             specializations, portfolio_links,
-            instagram, vk, telegram, about_me
+            instagram, vk, telegram, about_me,
+            openness_level, cooperation_format, is_blocked
         ) VALUES (
             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         ) RETURNING id, full_name, phone, city, created_at
         ''',
         (
@@ -77,7 +78,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             body_data.get('instagram'),
             body_data.get('vk'),
             body_data.get('telegram'),
-            body_data.get('aboutMe')
+            body_data.get('aboutMe'),
+            body_data.get('opennessLevel'),
+            body_data.get('cooperationFormat'),
+            body_data.get('isBlocked', False)
         )
     )
     

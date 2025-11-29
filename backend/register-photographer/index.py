@@ -45,13 +45,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     cur.execute(
         '''
-        INSERT INTO photographers (
+        INSERT INTO t_p16461725_model_photo_db.photographers (
             full_name, phone, email, city,
             experience_years, specializations, equipment,
             portfolio_links, instagram, vk, telegram,
-            about_me, price_range
+            about_me, price_range, cooperation_format, is_blocked
         ) VALUES (
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         ) RETURNING id, full_name, phone, city, created_at
         ''',
         (
@@ -67,7 +67,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             body_data.get('vk'),
             body_data.get('telegram'),
             body_data.get('aboutMe'),
-            body_data.get('priceRange')
+            body_data.get('priceRange'),
+            body_data.get('cooperationFormat'),
+            body_data.get('isBlocked', False)
         )
     )
     

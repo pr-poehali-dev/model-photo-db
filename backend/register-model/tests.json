@@ -6,7 +6,7 @@
       "path": "/",
       "body": {
         "fullName": "Анна Петрова",
-        "phone": "+79991234567",
+        "phone": "+79881234567",
         "email": "anna@example.com",
         "birthDate": "2000-05-15",
         "gender": "Женщина",

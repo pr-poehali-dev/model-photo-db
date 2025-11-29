@@ -1,0 +1,18 @@
+{
+  "tests": [
+    {
+      "name": "Search models",
+      "method": "GET",
+      "path": "/?type=model&city=Хабаровск&page=1",
+      "expectedStatus": 200,
+      "bodyMatcher": "skip"
+    },
+    {
+      "name": "Search photographers",
+      "method": "GET",
+      "path": "/?type=photographer&city=Хабаровск&page=1",
+      "expectedStatus": 200,
+      "bodyMatcher": "skip"
+    }
+  ]
+}

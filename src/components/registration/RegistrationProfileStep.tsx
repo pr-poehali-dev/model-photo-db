@@ -34,6 +34,9 @@ interface RegistrationData {
   physicalFeatures: string;
   sensitiveTopics: string;
   profileId?: number;
+  gender: string;
+  phone: string;
+  isBlocked: boolean;
 }
 
 const cities = [
@@ -111,15 +114,15 @@ export default function RegistrationProfileStep({
   onCancel 
 }: RegistrationProfileStepProps) {
   return (
-    <DialogContent className="animate-scale-in max-w-4xl max-h-[90vh]">
+    <DialogContent className="animate-scale-in max-w-4xl max-h-[90vh] flex flex-col">
       <RegistrationProgressBar currentStep="profile" />
-      <DialogHeader>
+      <DialogHeader className="shrink-0">
         <DialogTitle className="text-2xl flex items-center gap-2">
           <Icon name="FileEdit" size={24} />
           Редактор анкеты
         </DialogTitle>
       </DialogHeader>
-      <ScrollArea className="max-h-[calc(90vh-180px)] pr-4">
+      <ScrollArea className="flex-1 pr-4 overflow-y-auto">
         <div className="space-y-6">
           <div className="border-b pb-4">
             <PhotoGallery
@@ -193,6 +196,33 @@ export default function RegistrationProfileStep({
               </div>
 
               <div>
+                <Label htmlFor="profile-gender">Пол <span className="text-destructive">*</span></Label>
+                <Select value={formData.gender} onValueChange={(value) => setFormData({ ...formData, gender: value })}>
+                  <SelectTrigger id="profile-gender">
+                    <SelectValue placeholder="Выберите пол" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Женщина">Женщина</SelectItem>
+                    <SelectItem value="Мужчина">Мужчина</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="profile-phone">Телефон <span className="text-destructive">*</span></Label>
+                <Input
+                  id="profile-phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="+7 999 123-45-67"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  При изменении требуется повторная SMS-верификация
+                </p>
+              </div>
+
+              <div>
                 <Label htmlFor="profile-height">Рост (см) <span className="text-destructive">*</span></Label>
                 <Input
                   id="profile-height"
@@ -217,6 +247,19 @@ export default function RegistrationProfileStep({
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="profile-blocked"
+                  checked={formData.isBlocked}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isBlocked: checked as boolean })}
+                />
+                <Label htmlFor="profile-blocked" className="cursor-pointer">
+                  Заблокировать анкету (не отображается в поиске)
+                </Label>
               </div>
             </div>
 
@@ -364,7 +407,7 @@ export default function RegistrationProfileStep({
           </div>
         </div>
       </ScrollArea>
-      <DialogFooter className="mt-4">
+      <DialogFooter className="mt-4 shrink-0">
         <Button variant="outline" onClick={onCancel}>
           Отмена
         </Button>
