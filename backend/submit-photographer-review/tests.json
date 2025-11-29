@@ -1,0 +1,18 @@
+{
+  "tests": [
+    {
+      "name": "Submit photographer review",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "photographerId": 1,
+        "authorName": "Мария Смирнова",
+        "authorPhone": "+79005554433",
+        "rating": 5,
+        "reviewText": "Великолепный фотограф, потрясающие фотографии!"
+      },
+      "expectedStatus": 201,
+      "bodyMatcher": "skip"
+    }
+  ]
+}

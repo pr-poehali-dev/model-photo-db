@@ -1,0 +1,32 @@
+{
+  "tests": [
+    {
+      "name": "Register new model",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "fullName": "Анна Петрова",
+        "phone": "+79991234567",
+        "email": "anna@example.com",
+        "birthDate": "2000-05-15",
+        "gender": "Женщина",
+        "height": 175,
+        "weight": 55,
+        "bust": 86,
+        "waist": 60,
+        "hips": 90,
+        "shoeSize": 38.5,
+        "hairColor": "Светлые",
+        "eyeColor": "Голубые",
+        "city": "Москва",
+        "experience": "2 года опыта",
+        "specializations": ["Fashion", "Портрет"],
+        "portfolioLinks": ["https://example.com"],
+        "instagram": "@anna_model",
+        "aboutMe": "Профессиональная модель"
+      },
+      "expectedStatus": 201,
+      "bodyMatcher": "skip"
+    }
+  ]
+}

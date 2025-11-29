@@ -1,0 +1,18 @@
+{
+  "tests": [
+    {
+      "name": "Submit model review",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "modelId": 1,
+        "authorName": "Петр Сидоров",
+        "authorPhone": "+79001112233",
+        "rating": 5,
+        "reviewText": "Отличная модель, профессиональная работа!"
+      },
+      "expectedStatus": 201,
+      "bodyMatcher": "skip"
+    }
+  ]
+}

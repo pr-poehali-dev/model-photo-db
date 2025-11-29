@@ -1,0 +1,24 @@
+{
+  "tests": [
+    {
+      "name": "Register new photographer",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "fullName": "Иван Иванов",
+        "phone": "+79999876543",
+        "email": "ivan@example.com",
+        "city": "Санкт-Петербург",
+        "experienceYears": 5,
+        "specializations": ["Fashion", "Портрет", "Свадьбы"],
+        "equipment": "Canon EOS R5, Sony A7IV",
+        "portfolioLinks": ["https://example.com"],
+        "instagram": "@ivan_photo",
+        "aboutMe": "Профессиональный фотограф",
+        "priceRange": "от 5000₽"
+      },
+      "expectedStatus": 201,
+      "bodyMatcher": "skip"
+    }
+  ]
+}
