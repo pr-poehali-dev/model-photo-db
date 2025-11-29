@@ -7,6 +7,12 @@ import RegistrationProfileStep from './registration/RegistrationProfileStep';
 
 type RegistrationStep = 'initial' | 'verify' | 'profile';
 
+interface Photo {
+  id: string;
+  url: string;
+  file: File;
+}
+
 interface RegistrationData {
   login: string;
   password: string;
@@ -39,6 +45,8 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
   const [step, setStep] = useState<RegistrationStep>('initial');
   const [verificationCode, setVerificationCode] = useState('');
   const [sentCode] = useState('1234');
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [coverPhotoId, setCoverPhotoId] = useState<string | null>(null);
   const [formData, setFormData] = useState<RegistrationData>({
     login: '',
     password: '',
@@ -123,6 +131,8 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
 
     onClose();
     setStep('initial');
+    setPhotos([]);
+    setCoverPhotoId(null);
     setFormData({
       login: '',
       password: '',
@@ -185,6 +195,10 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
           formData={formData}
           setFormData={setFormData}
           toggleStyle={toggleStyle}
+          photos={photos}
+          coverPhotoId={coverPhotoId}
+          onPhotosChange={setPhotos}
+          onCoverPhotoChange={setCoverPhotoId}
           onSubmit={handleProfileSubmit}
           onCancel={handleCancel}
         />

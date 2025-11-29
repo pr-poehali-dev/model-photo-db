@@ -8,6 +8,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Icon from '@/components/ui/icon';
 import RegistrationProgressBar from './RegistrationProgressBar';
+import PhotoGallery from './PhotoGallery';
+
+interface Photo {
+  id: string;
+  url: string;
+  file: File;
+}
 
 interface RegistrationData {
   name: string;
@@ -83,6 +90,10 @@ interface RegistrationProfileStepProps {
   formData: RegistrationData;
   setFormData: (data: any) => void;
   toggleStyle: (style: string) => void;
+  photos: Photo[];
+  coverPhotoId: string | null;
+  onPhotosChange: (photos: Photo[]) => void;
+  onCoverPhotoChange: (photoId: string | null) => void;
   onSubmit: () => void;
   onCancel: () => void;
 }
@@ -91,6 +102,10 @@ export default function RegistrationProfileStep({
   formData, 
   setFormData, 
   toggleStyle,
+  photos,
+  coverPhotoId,
+  onPhotosChange,
+  onCoverPhotoChange,
   onSubmit, 
   onCancel 
 }: RegistrationProfileStepProps) {
@@ -105,6 +120,15 @@ export default function RegistrationProfileStep({
       </DialogHeader>
       <ScrollArea className="max-h-[calc(90vh-180px)] pr-4">
         <div className="space-y-6">
+          <div className="border-b pb-4">
+            <PhotoGallery
+              photos={photos}
+              coverPhotoId={coverPhotoId}
+              onPhotosChange={onPhotosChange}
+              onCoverPhotoChange={onCoverPhotoChange}
+            />
+          </div>
+
           <div className="border-b pb-4">
             <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
               <Icon name="AlertCircle" size={18} className="text-destructive" />
