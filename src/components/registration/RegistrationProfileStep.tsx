@@ -33,6 +33,7 @@ interface RegistrationData {
   instagram: string;
   physicalFeatures: string;
   sensitiveTopics: string;
+  profileId?: number;
 }
 
 const cities = [
@@ -143,6 +144,9 @@ export default function RegistrationProfileStep({
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Ваше имя"
                 />
+                {formData.profileId && (
+                  <p className="text-xs text-muted-foreground mt-1">ID: {formData.profileId}</p>
+                )}
               </div>
               
               <div>

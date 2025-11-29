@@ -19,17 +19,18 @@ interface PhotographerData {
   password: string;
   phone: string;
   name: string;
-  birthDate: string;
   email: string;
   city: string;
   specialization: string[];
   experience: string;
   equipment: string;
   workingFormats: string[];
-  priceRange: string;
+  priceFrom: string;
   portfolio: string;
   instagram: string;
   additionalInfo: string;
+  profileId?: number;
+  profilePhoto?: string;
 }
 
 interface PhotographerProfileStepProps {
@@ -46,8 +47,23 @@ interface PhotographerProfileStepProps {
 }
 
 const specializationOptions = [
-  'Fashion', 'Portrait', 'Wedding', 'Event', 'Commercial', 
-  'Editorial', 'Beauty', 'Street', 'Landscape', 'Product'
+  'Свадьба',
+  'Портреты', 
+  'Портреты семейные',
+  'Портреты детские',
+  'Портреты деловые',
+  'Реклама и глянец',
+  'Предметная съёмка',
+  'Фешн-фотография',
+  'Репортаж',
+  'Пейзаж',
+  'Стрит-фотограф',
+  'Фуд-фотограф',
+  'Аэрофотограф (в т.ч. с дрона)',
+  'Архитектура',
+  'Криминалист',
+  'Спорт',
+  'Тревел-фотография'
 ];
 
 const workingFormatOptions = ['TFP', 'Платные съёмки', 'Обмен услугами'];
@@ -69,11 +85,25 @@ export default function PhotographerProfileStep({
   onSubmit,
   onCancel
 }: PhotographerProfileStepProps) {
+  const handleProfilePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const url = URL.createObjectURL(file);
+    setFormData({ ...formData, profilePhoto: url });
+  };
+
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    const newPhotos: Photo[] = Array.from(files).map(file => ({
+    const totalPhotos = photos.length + files.length;
+    if (totalPhotos > 40) {
+      alert(`Можно загрузить максимум 40 фотографий`);
+      return;
+    }
+
+    const newPhotos: Photo[] = Array.from(files).slice(0, 40 - photos.length).map(file => ({
       id: Math.random().toString(36).substr(2, 9),
       url: URL.createObjectURL(file),
       file
@@ -102,28 +132,43 @@ export default function PhotographerProfileStep({
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">
-                  Имя и фамилия <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Александр Петров"
+            <div className="flex gap-6">
+              <div className="flex-shrink-0">
+                <Label>Фото фотографа</Label>
+                <div 
+                  className="w-32 h-32 border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer hover:bg-accent/50 transition mt-2"
+                  onClick={() => document.getElementById('profile-photo-upload')?.click()}
+                >
+                  {formData.profilePhoto ? (
+                    <img src={formData.profilePhoto} alt="Profile" className="w-full h-full object-cover rounded-lg" />
+                  ) : (
+                    <Icon name="User" size={48} className="text-muted-foreground" />
+                  )}
+                </div>
+                <input
+                  id="profile-photo-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleProfilePhotoUpload}
                 />
               </div>
-              <div>
-                <Label htmlFor="birthDate">
-                  Дата рождения <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="birthDate"
-                  type="date"
-                  value={formData.birthDate}
-                  onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                />
+              
+              <div className="flex-1 space-y-4">
+                <div>
+                  <Label htmlFor="name">
+                    Имя и фамилия <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Александр Петров"
+                  />
+                  {formData.profileId && (
+                    <p className="text-xs text-muted-foreground mt-1">ID: {formData.profileId}</p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -214,12 +259,12 @@ export default function PhotographerProfileStep({
             </div>
 
             <div>
-              <Label htmlFor="priceRange">Диапазон цен</Label>
+              <Label htmlFor="priceFrom">Цена от</Label>
               <Input
-                id="priceRange"
-                value={formData.priceRange}
-                onChange={(e) => setFormData({ ...formData, priceRange: e.target.value })}
-                placeholder="От 5000 до 15000 ₽"
+                id="priceFrom"
+                value={formData.priceFrom}
+                onChange={(e) => setFormData({ ...formData, priceFrom: e.target.value })}
+                placeholder="5000 ₽"
               />
             </div>
 
@@ -256,16 +301,17 @@ export default function PhotographerProfileStep({
             </div>
 
             <div>
-              <Label>Фотографии работ</Label>
+              <Label>Фотографии работ (макс. 40 шт.)</Label>
               <div className="mt-2">
                 <Button
                   type="button"
                   variant="outline"
                   className="w-full"
                   onClick={() => document.getElementById('photo-upload')?.click()}
+                  disabled={photos.length >= 40}
                 >
                   <Icon name="Upload" size={18} className="mr-2" />
-                  Загрузить фотографии
+                  Загрузить фотографии ({photos.length}/40)
                 </Button>
                 <input
                   id="photo-upload"

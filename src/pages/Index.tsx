@@ -160,17 +160,27 @@ export default function Index() {
   const [isModelViewOpen, setIsModelViewOpen] = useState(false);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
   const [loginForm, setLoginForm] = useState({ login: '', password: '' });
+  const [userProfileId, setUserProfileId] = useState<number | null>(null);
 
   const currentProfiles = currentPage === 'models' ? mockModels : mockPhotographers;
 
   const handleLogin = () => {
     if (loginForm.login === 'ad' && loginForm.password === '112233') {
       setUserRole('admin');
+      setUserProfileId(1001);
       setIsLoginOpen(false);
     }
   };
 
   const handleAddProfile = () => {
+    if (currentPage === 'models') {
+      setIsRegistrationOpen(true);
+    } else {
+      setIsPhotographerRegistrationOpen(true);
+    }
+  };
+
+  const handleMyProfile = () => {
     if (currentPage === 'models') {
       setIsRegistrationOpen(true);
     } else {
@@ -255,14 +265,25 @@ export default function Index() {
               </SheetContent>
             </Sheet>
 
-            <Button 
-              size="lg" 
-              className="bg-gradient-to-r from-secondary to-accent hover:opacity-90 transition-all hover-scale"
-              onClick={handleAddProfile}
-            >
-              <Icon name="UserPlus" className="mr-2" size={20} />
-              Добавить анкету
-            </Button>
+            {userRole === 'guest' ? (
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-secondary to-accent hover:opacity-90 transition-all hover-scale"
+                onClick={handleAddProfile}
+              >
+                <Icon name="UserPlus" className="mr-2" size={20} />
+                Добавить анкету
+              </Button>
+            ) : (
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-secondary to-accent hover:opacity-90 transition-all hover-scale"
+                onClick={handleMyProfile}
+              >
+                <Icon name="User" className="mr-2" size={20} />
+                Моя анкета
+              </Button>
+            )}
 
             <Button
               size="lg"

@@ -18,17 +18,18 @@ interface PhotographerData {
   password: string;
   phone: string;
   name: string;
-  birthDate: string;
   email: string;
   city: string;
   specialization: string[];
   experience: string;
   equipment: string;
   workingFormats: string[];
-  priceRange: string;
+  priceFrom: string;
   portfolio: string;
   instagram: string;
   additionalInfo: string;
+  profileId?: number;
+  profilePhoto?: string;
 }
 
 interface PhotographerRegistrationFlowProps {
@@ -43,19 +44,19 @@ export default function PhotographerRegistrationFlow({ open, onClose }: Photogra
   const [sentCode] = useState('1234');
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [coverPhotoId, setCoverPhotoId] = useState<string | null>(null);
+  const [profileId] = useState<number>(Math.floor(Math.random() * 9000) + 2000);
   const [formData, setFormData] = useState<PhotographerData>({
     login: '',
     password: '',
     phone: '',
     name: '',
-    birthDate: '',
     email: '',
     city: 'Хабаровск',
     specialization: [],
     experience: '',
     equipment: '',
     workingFormats: [],
-    priceRange: '',
+    priceFrom: '',
     portfolio: '',
     instagram: '',
     additionalInfo: ''
@@ -96,7 +97,7 @@ export default function PhotographerRegistrationFlow({ open, onClose }: Photogra
   };
 
   const handleProfileSubmit = () => {
-    if (!formData.name || !formData.birthDate || !formData.email || 
+    if (!formData.name || !formData.email || 
         !formData.city || formData.specialization.length === 0) {
       toast({
         title: 'Ошибка',
@@ -120,14 +121,13 @@ export default function PhotographerRegistrationFlow({ open, onClose }: Photogra
       password: '',
       phone: '',
       name: '',
-      birthDate: '',
       email: '',
       city: 'Хабаровск',
       specialization: [],
       experience: '',
       equipment: '',
       workingFormats: [],
-      priceRange: '',
+      priceFrom: '',
       portfolio: '',
       instagram: '',
       additionalInfo: ''
@@ -179,7 +179,7 @@ export default function PhotographerRegistrationFlow({ open, onClose }: Photogra
       )}
       {step === 'profile' && (
         <PhotographerProfileStep
-          formData={formData}
+          formData={{ ...formData, profileId }}
           setFormData={setFormData}
           toggleSpecialization={toggleSpecialization}
           toggleWorkingFormat={toggleWorkingFormat}

@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Icon from '@/components/ui/icon';
+import ReviewSection from './reviews/ReviewSection';
 
 interface Model {
   id: number;
@@ -39,6 +41,8 @@ export default function ModelViewDialog({
   allModels,
   onNavigate 
 }: ModelViewDialogProps) {
+  const [reviews, setReviews] = useState<Array<{ id: number; name: string; phone: string; text: string; date: string }>>([]);
+
   if (!model) return null;
 
   const currentIndex = allModels.findIndex(m => m.id === model.id);
@@ -54,6 +58,15 @@ export default function ModelViewDialog({
 
   const handleNext = () => {
     if (canGoNext) onNavigate('next');
+  };
+
+  const handleAddReview = (review: { name: string; phone: string; text: string }) => {
+    const newReview = {
+      id: Date.now(),
+      ...review,
+      date: new Date().toLocaleDateString('ru-RU')
+    };
+    setReviews([...reviews, newReview]);
   };
 
   const cooperationFormatText = model.cooperationFormat === 'tfp' ? 'TFP' : 
@@ -75,7 +88,10 @@ export default function ModelViewDialog({
                 <Icon name="ChevronLeft" size={24} />
               </Button>
               
-              <h2 className="text-3xl font-bold text-center flex-1">{model.name}</h2>
+              <div className="flex-1 text-center">
+                <h2 className="text-3xl font-bold">{model.name}</h2>
+                <p className="text-sm text-muted-foreground mt-1">ID: {model.id}</p>
+              </div>
               
               <Button
                 variant="ghost"
@@ -209,6 +225,10 @@ export default function ModelViewDialog({
                   />
                 </div>
               ))}
+            </div>
+
+            <div className="border-t pt-6 mt-6">
+              <ReviewSection reviews={reviews} onAddReview={handleAddReview} />
             </div>
 
             <div className="flex justify-center pt-4">

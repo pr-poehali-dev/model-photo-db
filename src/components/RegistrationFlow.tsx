@@ -33,6 +33,7 @@ interface RegistrationData {
   instagram: string;
   physicalFeatures: string;
   sensitiveTopics: string;
+  profileId?: number;
 }
 
 interface RegistrationFlowProps {
@@ -47,6 +48,7 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
   const [sentCode] = useState('1234');
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [coverPhotoId, setCoverPhotoId] = useState<string | null>(null);
+  const [profileId] = useState<number>(Math.floor(Math.random() * 9000) + 1000);
   const [formData, setFormData] = useState<RegistrationData>({
     login: '',
     password: '',
@@ -192,7 +194,7 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
       )}
       {step === 'profile' && (
         <RegistrationProfileStep
-          formData={formData}
+          formData={{ ...formData, profileId }}
           setFormData={setFormData}
           toggleStyle={toggleStyle}
           photos={photos}
