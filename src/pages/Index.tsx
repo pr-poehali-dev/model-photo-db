@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import RegistrationFlow from '@/components/RegistrationFlow';
 import PhotographerRegistrationFlow from '@/components/PhotographerRegistrationFlow';
 import ModelViewDialog from '@/components/ModelViewDialog';
+import PhotographerViewDialog from '@/components/PhotographerViewDialog';
 import { Toaster } from '@/components/ui/toaster';
 
 type UserRole = 'guest' | 'model' | 'photographer' | 'admin';
@@ -159,6 +160,8 @@ export default function Index() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isModelViewOpen, setIsModelViewOpen] = useState(false);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
+  const [isPhotographerViewOpen, setIsPhotographerViewOpen] = useState(false);
+  const [selectedPhotographerId, setSelectedPhotographerId] = useState<number | null>(null);
   const [loginForm, setLoginForm] = useState({ login: '', password: '' });
   const [userProfileId, setUserProfileId] = useState<number | null>(null);
 
@@ -193,6 +196,11 @@ export default function Index() {
     setIsModelViewOpen(true);
   };
 
+  const handleViewPhotographer = (photographerId: number) => {
+    setSelectedPhotographerId(photographerId);
+    setIsPhotographerViewOpen(true);
+  };
+
   const handleNavigateModel = (direction: 'prev' | 'next') => {
     if (selectedModelId === null) return;
     
@@ -204,7 +212,19 @@ export default function Index() {
     }
   };
 
+  const handleNavigatePhotographer = (direction: 'prev' | 'next') => {
+    if (selectedPhotographerId === null) return;
+    
+    const currentIndex = mockPhotographers.findIndex(p => p.id === selectedPhotographerId);
+    if (direction === 'prev' && currentIndex > 0) {
+      setSelectedPhotographerId(mockPhotographers[currentIndex - 1].id);
+    } else if (direction === 'next' && currentIndex < mockPhotographers.length - 1) {
+      setSelectedPhotographerId(mockPhotographers[currentIndex + 1].id);
+    }
+  };
+
   const selectedModel = mockModelsDetailed.find(m => m.id === selectedModelId) || null;
+  const selectedPhotographer = mockPhotographers.find(p => p.id === selectedPhotographerId) || null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -354,7 +374,7 @@ export default function Index() {
               key={profile.id} 
               className="group overflow-hidden hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-muted/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm animate-fade-in cursor-pointer"
               style={{ animationDelay: `${index * 0.1}s` }}
-              onClick={() => currentPage === 'models' && handleViewModel(profile.id)}
+              onClick={() => currentPage === 'models' ? handleViewModel(profile.id) : handleViewPhotographer(profile.id)}
             >
               <CardContent className="p-0">
                 <div className="relative overflow-hidden">
@@ -370,9 +390,15 @@ export default function Index() {
                 </div>
                 
                 <div className="p-5 space-y-2">
-                  <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                    {profile.name}
-                  </h3>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                      {profile.name}
+                    </h3>
+                    <div className="flex items-center gap-1">
+                      <Icon name="Star" size={16} className="text-yellow-500 fill-yellow-500" />
+                      <span className="text-sm font-semibold">4.8</span>
+                    </div>
+                  </div>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Icon name="MapPin" size={14} className="mr-1" />
                     {profile.city}
@@ -387,7 +413,11 @@ export default function Index() {
                       className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (currentPage === 'models') handleViewModel(profile.id);
+                        if (currentPage === 'models') {
+                          handleViewModel(profile.id);
+                        } else {
+                          handleViewPhotographer(profile.id);
+                        }
                       }}
                     >
                       <Icon name="Eye" size={14} className="mr-1" />
@@ -419,6 +449,14 @@ export default function Index() {
           model={selectedModel}
           allModels={mockModelsDetailed}
           onNavigate={handleNavigateModel}
+        />
+        
+        <PhotographerViewDialog
+          isOpen={isPhotographerViewOpen}
+          onClose={() => setIsPhotographerViewOpen(false)}
+          photographer={selectedPhotographer}
+          allPhotographers={mockPhotographers}
+          onNavigate={handleNavigatePhotographer}
         />
         
         <Toaster />

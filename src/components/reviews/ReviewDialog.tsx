@@ -5,24 +5,25 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import StarRating from './StarRating';
 
 type ReviewStep = 'form' | 'verify';
 
 interface ReviewDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (review: { name: string; phone: string; text: string }) => void;
+  onSubmit: (review: { name: string; phone: string; text: string; rating: number }) => void;
 }
 
 export default function ReviewDialog({ isOpen, onClose, onSubmit }: ReviewDialogProps) {
   const { toast } = useToast();
   const [step, setStep] = useState<ReviewStep>('form');
-  const [reviewData, setReviewData] = useState({ name: '', phone: '', text: '' });
+  const [reviewData, setReviewData] = useState({ name: '', phone: '', text: '', rating: 5 });
   const [verificationCode, setVerificationCode] = useState('');
   const [sentCode] = useState('1234');
 
   const handleFormSubmit = () => {
-    if (!reviewData.name || !reviewData.phone || !reviewData.text) {
+    if (!reviewData.name || !reviewData.phone || !reviewData.text || reviewData.rating === 0) {
       toast({
         title: 'Ошибка',
         description: 'Заполните все поля',
@@ -61,7 +62,7 @@ export default function ReviewDialog({ isOpen, onClose, onSubmit }: ReviewDialog
 
   const handleClose = () => {
     setStep('form');
-    setReviewData({ name: '', phone: '', text: '' });
+    setReviewData({ name: '', phone: '', text: '', rating: 5 });
     setVerificationCode('');
     onClose();
   };
@@ -101,6 +102,15 @@ export default function ReviewDialog({ isOpen, onClose, onSubmit }: ReviewDialog
                 placeholder="Напишите ваш отзыв..."
                 rows={4}
               />
+            </div>
+            <div>
+              <Label>Рейтинг</Label>
+              <div className="mt-2">
+                <StarRating
+                  rating={reviewData.rating}
+                  onRatingChange={(rating) => setReviewData({ ...reviewData, rating })}
+                />
+              </div>
             </div>
             <div className="flex gap-2 pt-2">
               <Button variant="outline" onClick={handleClose} className="flex-1">

@@ -3,12 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import ReviewDialog from './ReviewDialog';
+import StarRating from './StarRating';
 
 interface Review {
   id: number;
   name: string;
   phone: string;
   text: string;
+  rating: number;
   date: string;
 }
 
@@ -50,6 +52,9 @@ export default function ReviewSection({ reviews, onAddReview }: ReviewSectionPro
                     <p className="text-sm text-muted-foreground">{review.phone}</p>
                   </div>
                   <p className="text-xs text-muted-foreground">{review.date}</p>
+                </div>
+                <div className="mt-2 mb-2">
+                  <StarRating rating={review.rating} readonly size={16} />
                 </div>
                 <p className="text-sm mt-2">{review.text}</p>
               </CardContent>
