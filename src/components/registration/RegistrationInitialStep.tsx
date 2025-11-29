@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
+import RegistrationProgressBar from './RegistrationProgressBar';
 
 interface RegistrationData {
   login: string;
@@ -25,6 +26,7 @@ export default function RegistrationInitialStep({
 }: RegistrationInitialStepProps) {
   return (
     <DialogContent className="animate-scale-in max-w-md">
+      <RegistrationProgressBar currentStep="initial" />
       <DialogHeader>
         <DialogTitle className="text-2xl flex items-center gap-2">
           <Icon name="UserPlus" size={24} />

@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Icon from '@/components/ui/icon';
+import RegistrationProgressBar from './RegistrationProgressBar';
 
 interface RegistrationData {
   name: string;
@@ -95,6 +96,7 @@ export default function RegistrationProfileStep({
 }: RegistrationProfileStepProps) {
   return (
     <DialogContent className="animate-scale-in max-w-4xl max-h-[90vh]">
+      <RegistrationProgressBar currentStep="profile" />
       <DialogHeader>
         <DialogTitle className="text-2xl flex items-center gap-2">
           <Icon name="FileEdit" size={24} />

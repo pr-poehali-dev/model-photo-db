@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
+import RegistrationProgressBar from './RegistrationProgressBar';
 
 interface RegistrationVerifyStepProps {
   phone: string;
@@ -21,6 +22,7 @@ export default function RegistrationVerifyStep({
 }: RegistrationVerifyStepProps) {
   return (
     <DialogContent className="animate-scale-in max-w-md">
+      <RegistrationProgressBar currentStep="verify" />
       <DialogHeader>
         <DialogTitle className="text-2xl flex items-center gap-2">
           <Icon name="ShieldCheck" size={24} />
