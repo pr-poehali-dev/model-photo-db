@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import RegistrationFlow from '@/components/RegistrationFlow';
+import ModelViewDialog from '@/components/ModelViewDialog';
 import { Toaster } from '@/components/ui/toaster';
 
 type UserRole = 'guest' | 'model' | 'photographer' | 'admin';
@@ -23,11 +24,123 @@ interface Profile {
   lastLogin: Date;
 }
 
+interface Model {
+  id: number;
+  name: string;
+  age: number;
+  city: string;
+  height: string;
+  images: string[];
+  phone?: string;
+  cooperationFormat?: string;
+  rate?: string;
+  sensitivityLevel?: string;
+  hairLength?: string;
+  styles?: string[];
+  experience?: string;
+  messenger?: string;
+  portfolio?: string;
+  instagram?: string;
+  physicalFeatures?: string;
+  sensitiveTopics?: string;
+}
+
 const mockModels: Profile[] = [
   { id: 1001, name: 'Анастасия Волкова', city: 'Москва', style: 'Fashion, Lifestyle', coverImage: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&h=500&fit=crop', lastLogin: new Date() },
   { id: 1002, name: 'Виктория Смирнова', city: 'Санкт-Петербург', style: 'Beauty, Portrait', coverImage: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=500&fit=crop', lastLogin: new Date(Date.now() - 86400000) },
   { id: 1003, name: 'Дарья Новикова', city: 'Екатеринбург', style: 'Editorial, Commercial', coverImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=500&fit=crop', lastLogin: new Date(Date.now() - 172800000) },
   { id: 1004, name: 'Мария Козлова', city: 'Казань', style: 'Artistic, Conceptual', coverImage: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=500&fit=crop', lastLogin: new Date(Date.now() - 259200000) },
+];
+
+const mockModelsDetailed: Model[] = [
+  {
+    id: 1001,
+    name: 'Анастасия Волкова',
+    age: 24,
+    city: 'Москва',
+    height: '175',
+    phone: '+7 (999) 123-45-67',
+    cooperationFormat: 'paid',
+    rate: '5000',
+    sensitivityLevel: 'Купальник',
+    hairLength: 'По лопатки',
+    styles: ['Fashion', 'Lifestyle', 'Beauty'],
+    experience: '3 года опыта, работала с известными брендами',
+    messenger: 'Telegram: @anastasia_v',
+    portfolio: 'https://portfolio.example.com/anastasia',
+    instagram: '@anastasia.volkova',
+    physicalFeatures: 'Голубые глаза, светлые волосы',
+    sensitiveTopics: 'Не работаю с underwater съёмками',
+    images: [
+      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=700&fit=crop',
+    ]
+  },
+  {
+    id: 1002,
+    name: 'Виктория Смирнова',
+    age: 21,
+    city: 'Санкт-Петербург',
+    height: '168',
+    phone: '+7 (999) 234-56-78',
+    cooperationFormat: 'tfp',
+    sensitivityLevel: 'Портрет',
+    hairLength: 'До плеч',
+    styles: ['Beauty', 'Portrait'],
+    experience: '1 год опыта, активно развиваю портфолио',
+    messenger: 'WhatsApp: +7 (999) 234-56-78',
+    instagram: '@victoria.smirnova',
+    physicalFeatures: 'Карие глаза, темные волосы',
+    images: [
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&h=700&fit=crop',
+    ]
+  },
+  {
+    id: 1003,
+    name: 'Дарья Новикова',
+    age: 26,
+    city: 'Екатеринбург',
+    height: '172',
+    phone: '+7 (999) 345-67-89',
+    cooperationFormat: 'paid',
+    rate: '4000',
+    sensitivityLevel: 'Бельё',
+    hairLength: 'Каре',
+    styles: ['Editorial', 'Commercial', 'Fashion'],
+    experience: '5 лет опыта, работала в рекламных кампаниях',
+    messenger: 'Telegram: @daria_n',
+    portfolio: 'https://portfolio.example.com/daria',
+    instagram: '@daria.novikova',
+    physicalFeatures: 'Зелёные глаза, рыжие волосы',
+    images: [
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&h=700&fit=crop',
+    ]
+  },
+  {
+    id: 1004,
+    name: 'Мария Козлова',
+    age: 23,
+    city: 'Казань',
+    height: '178',
+    cooperationFormat: 'tfp',
+    sensitivityLevel: 'Гламур',
+    hairLength: 'По пояс',
+    styles: ['Artistic', 'Conceptual', 'Fashion'],
+    experience: '2 года опыта в творческих проектах',
+    messenger: 'Telegram: @maria_k',
+    instagram: '@maria.kozlova',
+    physicalFeatures: 'Серые глаза, длинные чёрные волосы',
+    sensitiveTopics: 'Предпочитаю художественные проекты',
+    images: [
+      'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500&h=700&fit=crop',
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&h=700&fit=crop',
+    ]
+  },
 ];
 
 const mockPhotographers: Profile[] = [
@@ -42,6 +155,8 @@ export default function Index() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isModelViewOpen, setIsModelViewOpen] = useState(false);
+  const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
   const [loginForm, setLoginForm] = useState({ login: '', password: '' });
 
   const currentProfiles = currentPage === 'models' ? mockModels : mockPhotographers;
@@ -56,6 +171,24 @@ export default function Index() {
   const handleAddProfile = () => {
     setIsRegistrationOpen(true);
   };
+
+  const handleViewModel = (modelId: number) => {
+    setSelectedModelId(modelId);
+    setIsModelViewOpen(true);
+  };
+
+  const handleNavigateModel = (direction: 'prev' | 'next') => {
+    if (selectedModelId === null) return;
+    
+    const currentIndex = mockModelsDetailed.findIndex(m => m.id === selectedModelId);
+    if (direction === 'prev' && currentIndex > 0) {
+      setSelectedModelId(mockModelsDetailed[currentIndex - 1].id);
+    } else if (direction === 'next' && currentIndex < mockModelsDetailed.length - 1) {
+      setSelectedModelId(mockModelsDetailed[currentIndex + 1].id);
+    }
+  };
+
+  const selectedModel = mockModelsDetailed.find(m => m.id === selectedModelId) || null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -192,8 +325,9 @@ export default function Index() {
           {currentProfiles.map((profile, index) => (
             <Card 
               key={profile.id} 
-              className="group overflow-hidden hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-muted/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm animate-fade-in"
+              className="group overflow-hidden hover:shadow-2xl transition-all duration-300 hover-scale border-2 border-muted/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm animate-fade-in cursor-pointer"
               style={{ animationDelay: `${index * 0.1}s` }}
+              onClick={() => currentPage === 'models' && handleViewModel(profile.id)}
             >
               <CardContent className="p-0">
                 <div className="relative overflow-hidden">
@@ -221,7 +355,14 @@ export default function Index() {
                     {profile.style}
                   </div>
                   <div className="pt-2 flex justify-between items-center">
-                    <Button size="sm" className="bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+                    <Button 
+                      size="sm" 
+                      className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (currentPage === 'models') handleViewModel(profile.id);
+                      }}
+                    >
                       <Icon name="Eye" size={14} className="mr-1" />
                       Смотреть
                     </Button>
@@ -239,6 +380,15 @@ export default function Index() {
           open={isRegistrationOpen} 
           onClose={() => setIsRegistrationOpen(false)} 
         />
+        
+        <ModelViewDialog
+          isOpen={isModelViewOpen}
+          onClose={() => setIsModelViewOpen(false)}
+          model={selectedModel}
+          allModels={mockModelsDetailed}
+          onNavigate={handleNavigateModel}
+        />
+        
         <Toaster />
       </div>
     </div>
