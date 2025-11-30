@@ -320,8 +320,23 @@ export default function Index() {
     }
   };
 
-  const selectedModel = mockModelsDetailed.find(m => m.id === selectedModelId) || null;
-  const selectedPhotographer = mockPhotographers.find(p => p.id === selectedPhotographerId) || null;
+  const selectedModel = selectedModelId ? {
+    id: selectedModelId,
+    name: profiles.find(p => p.id === selectedModelId)?.name || 'Модель',
+    age: 25,
+    city: profiles.find(p => p.id === selectedModelId)?.city || 'Не указан',
+    height: '170',
+    images: [profiles.find(p => p.id === selectedModelId)?.coverImage || ''],
+    styles: [profiles.find(p => p.id === selectedModelId)?.style || '']
+  } : null;
+  
+  const selectedPhotographer = selectedPhotographerId ? {
+    id: selectedPhotographerId,
+    name: profiles.find(p => p.id === selectedPhotographerId)?.name || 'Фотограф',
+    city: profiles.find(p => p.id === selectedPhotographerId)?.city || 'Не указан',
+    images: [profiles.find(p => p.id === selectedPhotographerId)?.coverImage || ''],
+    specialization: [profiles.find(p => p.id === selectedPhotographerId)?.style || '']
+  } : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -641,12 +656,22 @@ export default function Index() {
 
         <RegistrationFlow 
           open={isRegistrationOpen} 
-          onClose={() => setIsRegistrationOpen(false)} 
+          onClose={() => setIsRegistrationOpen(false)}
+          onSuccess={() => {
+            setProfiles([]);
+            setCurrentPageNum(1);
+            loadProfiles(1, true);
+          }}
         />
         
         <PhotographerRegistrationFlow
           open={isPhotographerRegistrationOpen}
           onClose={() => setIsPhotographerRegistrationOpen(false)}
+          onSuccess={() => {
+            setProfiles([]);
+            setCurrentPageNum(1);
+            loadProfiles(1, true);
+          }}
         />
         
         <ModelViewDialog

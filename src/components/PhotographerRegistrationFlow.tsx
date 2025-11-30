@@ -35,9 +35,10 @@ interface PhotographerData {
 interface PhotographerRegistrationFlowProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function PhotographerRegistrationFlow({ open, onClose }: PhotographerRegistrationFlowProps) {
+export default function PhotographerRegistrationFlow({ open, onClose, onSuccess }: PhotographerRegistrationFlowProps) {
   const { toast } = useToast();
   const [step, setStep] = useState<RegistrationStep>('initial');
   const [verificationCode, setVerificationCode] = useState('');
@@ -108,6 +109,20 @@ export default function PhotographerRegistrationFlow({ open, onClose }: Photogra
     }
 
     try {
+      let profilePhotoUrl = null;
+      
+      if (photos.length > 0 && coverPhotoId) {
+        const coverPhoto = photos.find(p => p.id === coverPhotoId);
+        if (coverPhoto) {
+          const reader = new FileReader();
+          const base64Promise = new Promise<string>((resolve) => {
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(coverPhoto.file);
+          });
+          profilePhotoUrl = await base64Promise;
+        }
+      }
+      
       const response = await fetch('https://functions.poehali.dev/ca71ce4c-5d1f-47f4-bf13-9817e53809c1', {
         method: 'POST',
         headers: {
@@ -128,7 +143,8 @@ export default function PhotographerRegistrationFlow({ open, onClose }: Photogra
           aboutMe: formData.additionalInfo,
           priceRange: formData.priceFrom,
           cooperationFormat: formData.workingFormats.includes('paid') ? 'paid' : 'tfp',
-          isBlocked: false
+          isBlocked: false,
+          profilePhotoUrl: profilePhotoUrl
         })
       });
 
@@ -143,6 +159,10 @@ export default function PhotographerRegistrationFlow({ open, onClose }: Photogra
         description: `Ваша анкета #${data.id} успешно создана!`,
       });
 
+      if (onSuccess) {
+        onSuccess();
+      }
+      
       onClose();
       setStep('initial');
       setPhotos([]);

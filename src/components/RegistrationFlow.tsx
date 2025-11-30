@@ -39,9 +39,10 @@ interface RegistrationData {
 interface RegistrationFlowProps {
   open: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function RegistrationFlow({ open, onClose }: RegistrationFlowProps) {
+export default function RegistrationFlow({ open, onClose, onSuccess }: RegistrationFlowProps) {
   const { toast } = useToast();
   const [step, setStep] = useState<RegistrationStep>('initial');
   const [verificationCode, setVerificationCode] = useState('');
@@ -127,6 +128,20 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
     }
 
     try {
+      let profilePhotoUrl = null;
+      
+      if (photos.length > 0 && coverPhotoId) {
+        const coverPhoto = photos.find(p => p.id === coverPhotoId);
+        if (coverPhoto) {
+          const reader = new FileReader();
+          const base64Promise = new Promise<string>((resolve) => {
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(coverPhoto.file);
+          });
+          profilePhotoUrl = await base64Promise;
+        }
+      }
+      
       const response = await fetch('https://functions.poehali.dev/eb9f6d6a-af9b-43d3-bea1-697badf8e8b8', {
         method: 'POST',
         headers: {
@@ -156,7 +171,8 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
           aboutMe: formData.physicalFeatures,
           opennessLevel: formData.sensitivityLevel,
           cooperationFormat: formData.cooperationFormat,
-          isBlocked: false
+          isBlocked: false,
+          profilePhotoUrl: profilePhotoUrl
         })
       });
 
@@ -171,6 +187,10 @@ export default function RegistrationFlow({ open, onClose }: RegistrationFlowProp
         description: `Ваша анкета #${data.id} успешно создана!`,
       });
 
+      if (onSuccess) {
+        onSuccess();
+      }
+      
       onClose();
       setStep('initial');
       setPhotos([]);

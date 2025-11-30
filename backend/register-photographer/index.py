@@ -71,6 +71,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     price_range = escape_sql(body_data.get('priceRange'))
     cooperation_format = escape_sql(body_data.get('cooperationFormat'))
     is_blocked = escape_sql(body_data.get('isBlocked', False))
+    profile_photo_url = escape_sql(body_data.get('profilePhotoUrl'))
     
     check_query = f'''
         SELECT id, full_name, phone, city, created_at
@@ -106,12 +107,12 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             full_name, phone, email, city,
             experience_years, specializations, equipment,
             portfolio_links, instagram, vk, telegram,
-            about_me, price_range, cooperation_format, is_blocked
+            about_me, price_range, cooperation_format, is_blocked, profile_photo_url
         ) VALUES (
             {full_name}, {phone}, {email}, {city},
             {experience_years}, {specializations}, {equipment},
             {portfolio_links}, {instagram}, {vk}, {telegram},
-            {about_me}, {price_range}, {cooperation_format}, {is_blocked}
+            {about_me}, {price_range}, {cooperation_format}, {is_blocked}, {profile_photo_url}
         ) RETURNING id, full_name, phone, city, created_at
     '''
     
